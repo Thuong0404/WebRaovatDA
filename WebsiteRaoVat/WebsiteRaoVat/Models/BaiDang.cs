@@ -12,6 +12,7 @@ namespace WebsiteRaoVat.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public BaiDang()
         {
+            BinhLuans = new HashSet<BinhLuan>();
             QuangCaos = new HashSet<QuangCao>();
         }
 
@@ -58,6 +59,9 @@ namespace WebsiteRaoVat.Models
         public virtual LoaiSanPham LoaiSanPham { get; set; }
 
         public virtual TaiKhoan TaiKhoan { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BinhLuan> BinhLuans { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<QuangCao> QuangCaos { get; set; }

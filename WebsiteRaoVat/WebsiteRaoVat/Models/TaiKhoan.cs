@@ -13,6 +13,7 @@ namespace WebsiteRaoVat.Models
         public TaiKhoan()
         {
             BaiDangs = new HashSet<BaiDang>();
+            BinhLuans = new HashSet<BinhLuan>();
         }
 
         [Key]
@@ -44,5 +45,8 @@ namespace WebsiteRaoVat.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BaiDang> BaiDangs { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BinhLuan> BinhLuans { get; set; }
     }
 }

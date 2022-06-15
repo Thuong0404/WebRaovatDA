@@ -495,8 +495,8 @@ namespace WebsiteRaoVat.Areas.Admin.Controllers
         }
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "websitefashi@gmail.com";
-            string password = "fashi*123*";
+            string email = "dieuvothi635@gmail.com";
+            string password = "dieu12345";
 
             var loginInfo = new NetworkCredential(email, password);
             var msg = new System.Net.Mail.MailMessage();

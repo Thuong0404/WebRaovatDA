@@ -8,11 +8,12 @@ namespace WebsiteRaoVat.Models
     public partial class RaoVatDB : DbContext
     {
         public RaoVatDB()
-            : base("name=RaoVatDB")
+            : base("name=RaoVatDB2")
         {
         }
 
         public virtual DbSet<BaiDang> BaiDangs { get; set; }
+        public virtual DbSet<BinhLuan> BinhLuans { get; set; }
         public virtual DbSet<CuoiHoiThoai> CuoiHoiThoais { get; set; }
         public virtual DbSet<DanhMuc> DanhMucs { get; set; }
         public virtual DbSet<DSYeuThich> DSYeuThiches { get; set; }
@@ -20,6 +21,7 @@ namespace WebsiteRaoVat.Models
         public virtual DbSet<QuangCao> QuangCaos { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<TaiKhoan> TaiKhoans { get; set; }
+        public virtual DbSet<ChildComment> ChildComments { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -45,6 +47,10 @@ namespace WebsiteRaoVat.Models
 
             modelBuilder.Entity<BaiDang>()
                 .Property(e => e.HinhAnh4)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<BinhLuan>()
+                .Property(e => e.Username)
                 .IsUnicode(false);
 
             modelBuilder.Entity<CuoiHoiThoai>()

@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using WebsiteRaoVat.Models;
 
+
+
 namespace WebsiteRaoVat.Controllers
 {
     public class HomeController : Controller
@@ -23,11 +25,121 @@ namespace WebsiteRaoVat.Controllers
             List<DanhMuc> lstDanhMuc = db.DanhMucs.ToList();
             return View(lstDanhMuc);
         }
+        public JsonResult AddBinhLuan(int idbaidang, string noidung)
+        {
+
+            try
+            {
+
+                TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+                if (taikhoan.Username != "null")
+                {
+
+                    ViewBag.Session = taikhoan.Username;
+                    BinhLuan binhLuan = new BinhLuan();
+                    
+                    binhLuan.Username = taikhoan.Username;
+                    binhLuan.NoiDung = noidung;
+                    binhLuan.MaBaiDang = idbaidang;
+                    binhLuan.ParentId = 0;
+                    db.BinhLuans.Add(binhLuan);
+
+                    db.SaveChanges();
+                    
+
+                }
+                else
+                {
+                    return Json(new { code = 500, }, JsonRequestBehavior.AllowGet);
+                }
+                    return Json(new { code = 200, msg = "Bình Luận thành công" }, JsonRequestBehavior.AllowGet);
+                }
+                
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+        public JsonResult AddChildBinhLuan(string noidung, int idbl)
+        {
+
+            try
+            {
+
+                TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+               
+                if (taikhoan.Username != "null")
+                {
+                    
+                    ViewBag.Session = taikhoan.Username;
+                    
+                    ChildComment binhLuan = new ChildComment();
+                    
+                    binhLuan.MaBL = idbl;
+                    binhLuan.NoiDung = noidung;
+                    
+                    db.ChildComments.Add(binhLuan);
+
+                    db.SaveChanges();
+                   
+                }
+                else
+                {
+                    return Json(new { code = 500, }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 200, msg = "Bình Luận thành công" }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+        [HttpPost]
+        public JsonResult EditCommnent(int idbaidang, int mabl, string noidung, string username)
+        {
+
+            try
+            {
+
+                TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+                var binhluan = (from c in db.BinhLuans where c.MaBL==mabl && c.Username==username select c).SingleOrDefault();
+                
+                binhluan.NoiDung = noidung;
+                binhluan.MaBaiDang = idbaidang;
+               
+                db.SaveChanges();
+                return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult XoaBinhLuan(int mabl)
+        {
+            try
+            {
+                var bl = (from c in db.BinhLuans where c.MaBL == mabl select c).FirstOrDefault();
+                db.BinhLuans.Remove(bl);
+                db.SaveChanges();
+
+                return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public JsonResult getLoaiSP(int MaDanhMuc)
         {
             try
             {
-                var lstLoaiSP = from l in db.LoaiSanPhams where l.MaDanhMuc == MaDanhMuc select new { MaLoaiSP = l.MaLoaiSP, TenLoaiSP = l.TenLoaiSP};
+                var lstLoaiSP = from l in db.LoaiSanPhams where l.MaDanhMuc == MaDanhMuc select new { MaLoaiSP = l.MaLoaiSP, TenLoaiSP = l.TenLoaiSP };
                 return Json(new { code = 200, lstLoaiSP = lstLoaiSP }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -39,6 +151,7 @@ namespace WebsiteRaoVat.Controllers
         {
             try
             {
+
                 TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
                 BaiDang baidang = new BaiDang();
                 baidang.MaLoaiSP = MaLoaiSP;
@@ -49,8 +162,8 @@ namespace WebsiteRaoVat.Controllers
                 if (Hinh != "NULL")
                 {
                     baidang.HinhAnh = Hinh;
-                }               
-                if(Hinh1 != "NULL")
+                }
+                if (Hinh1 != "NULL")
                 {
                     baidang.HinhAnh1 = Hinh1;
                 }
@@ -65,7 +178,7 @@ namespace WebsiteRaoVat.Controllers
                 if (Hinh4 != "NULL")
                 {
                     baidang.HinhAnh4 = Hinh4;
-                }              
+                }
                 baidang.Username = taikhoan.Username;
                 baidang.TrangThai = 2;
                 baidang.NgayDang = DateTime.Now;
@@ -116,8 +229,8 @@ namespace WebsiteRaoVat.Controllers
         }
         public ActionResult Menu()
         {
-            TaiKhoan taikhoan = (TaiKhoan) Session["TaiKhoan"];
-            if(taikhoan != null)
+            TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+            if (taikhoan != null)
             {
                 ViewBag.Username = taikhoan.Username;
             }
@@ -127,7 +240,7 @@ namespace WebsiteRaoVat.Controllers
         {
             TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
             ViewBag.TenNguoiDung = taikhoan.TenNguoiDung;
-            if(taikhoan.Hinh == null)
+            if (taikhoan.Hinh == null)
             {
                 ViewBag.Hinh = "/Images/img_avatar.png";
             }
@@ -143,7 +256,7 @@ namespace WebsiteRaoVat.Controllers
             {
                 TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
                 //Lấy bài đăng theo trạng thái
-                var lstbaidang = (from b in db.BaiDangs where b.TrangThai == TrangThai &&b.Username == taikhoan.Username select new { MaBaiDang = b.MaBaiDang, TieuDe = b.TieuDe, Gia = b.Gia, HinhAnh = b.HinhAnh, TrangThai = b.TrangThai, NgayDang=b.NgayDang }).ToList();
+                var lstbaidang = (from b in db.BaiDangs where b.TrangThai == TrangThai && b.Username == taikhoan.Username select new { MaBaiDang = b.MaBaiDang, TieuDe = b.TieuDe, Gia = b.Gia, HinhAnh = b.HinhAnh, TrangThai = b.TrangThai, NgayDang = b.NgayDang }).ToList();
                 //Lấy bài đăng còn hạn quảng cáo
                 var listqc = (from tin in db.QuangCaos
                               where DateTime.Compare(DateTime.Now, (DateTime)tin.NgayHetHan) == -1
@@ -155,7 +268,8 @@ namespace WebsiteRaoVat.Controllers
                 var lstGop = (from baidang in lstbaidang
                               join quangcao in listqc on baidang.MaBaiDang equals quangcao.MaBaiDang into gr
                               from gop in gr.DefaultIfEmpty()
-                              select new {
+                              select new
+                              {
                                   MaBaiDang = baidang.MaBaiDang,
                                   TieuDe = baidang.TieuDe,
                                   Gia = baidang.Gia,
@@ -164,15 +278,15 @@ namespace WebsiteRaoVat.Controllers
                                   NgayHetHan = gop?.NgayHetHan ?? null
                               }).ToList();
                 var lst1 = (from baidang in lstGop
-                              select new
-                              {
-                                  MaBaiDang = baidang.MaBaiDang,
-                                  TieuDe = baidang.TieuDe,
-                                  Gia = baidang.Gia.GetValueOrDefault(0).ToString("N0"),
-                                  HinhAnh = baidang.HinhAnh,
-                                  TrangThai = baidang.TrangThai,
-                                  NgayHetHan = baidang.NgayHetHan.ToString()
-                              }).ToList();
+                            select new
+                            {
+                                MaBaiDang = baidang.MaBaiDang,
+                                TieuDe = baidang.TieuDe,
+                                Gia = baidang.Gia.GetValueOrDefault(0).ToString("N0"),
+                                HinhAnh = baidang.HinhAnh,
+                                TrangThai = baidang.TrangThai,
+                                NgayHetHan = baidang.NgayHetHan.ToString()
+                            }).ToList();
                 //Console.WriteLine(lstGop);
                 return Json(new { code = 200, lstBaiDang = lst1 }, JsonRequestBehavior.AllowGet);
             }
@@ -222,12 +336,30 @@ namespace WebsiteRaoVat.Controllers
         }
         public ActionResult BaiDang(int id)
         {
+            
             TaiKhoan tk = (TaiKhoan)Session["TaiKhoan"];
-            BaiDang baidang = db.BaiDangs.Where(x => x.MaBaiDang == id).FirstOrDefault();       
-            if(tk != null)
+            BaiDang baidang = db.BaiDangs.Where(x => x.MaBaiDang == id).FirstOrDefault();
+            // lấy all cmt
+            List<BinhLuan> lstBL = (db.BinhLuans.Where(n => n.MaBaiDang == id && n.BaiDang.MaBaiDang == n.MaBaiDang)).ToList();
+            //khởi tại child cmt
+            List<ChildComment> lstChildCmt = new List<ChildComment>();
+
+            //laaays cmt con
+            foreach( var item in lstBL)
             {
-                ViewBag.Session = tk.Username;
+                List<ChildComment>listcmt= (db.ChildComments.Where(c => c.MaBL ==item.MaBL)).ToList();
+
+                lstChildCmt.AddRange(listcmt);
             }
+            
+            ViewBag.listChildCmt = lstChildCmt;
+
+            //ViewBag.Session = tk.Username;
+
+            ViewBag.listBL = lstBL;
+            
+               
+
             return View(baidang);
         }
         public JsonResult getTinLienQuan(int madanhmuc, int mabaidang)
@@ -235,14 +367,14 @@ namespace WebsiteRaoVat.Controllers
             try
             {
                 List<BaiDang> lst = (from b in db.BaiDangs
-                              where b.LoaiSanPham.MaDanhMuc == madanhmuc && b.TrangThai == 0
-                              select b).ToList();
+                                     where b.LoaiSanPham.MaDanhMuc == madanhmuc && b.TrangThai == 0
+                                     select b).ToList();
                 List<BaiDang> baidang = (from b in db.BaiDangs
-                                        where b.MaBaiDang == mabaidang
-                                        select b).ToList();
+                                         where b.MaBaiDang == mabaidang
+                                         select b).ToList();
                 List<BaiDang> lsttin = (lst.Except(baidang)).ToList();
                 List<BaiDang> listBaiBang = new List<BaiDang>();
-                if(lsttin.Count > 6)
+                if (lsttin.Count > 6)
                 {
                     for (int i = 0; i < 6; i++)
                     {
@@ -281,10 +413,10 @@ namespace WebsiteRaoVat.Controllers
             //string serectkey = "art4TPJhFphYnpVLIDX9pIWKcXybGJw3";
             serectkey = "sxYpKQjIzvxSY1hbgokJdIsQeT3iFulI";
             string orderInfo = "Mua quảng cáo";
-            string returnUrl = "https://localhost:44349/Home/returnUrl/"+mabaidang;
+            string returnUrl = "https://localhost:44349/Home/returnUrl/" + mabaidang;
             string notifyurl = "https://localhost:44349/Home/notifyurl";
 
-            amount = ""+ tongtien;
+            amount = "" + tongtien;
             string orderid = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
             string extraData = "";
@@ -375,9 +507,11 @@ namespace WebsiteRaoVat.Controllers
                 qc.NgayHetHan = ngayhethan;
                 db.QuangCaos.Add(qc);
                 db.SaveChanges();
+                
                 ViewBag.Message = "Thanh toán thành công!";
             }
             return View();
+            //return RedirectToAction("QuanLyTin", "Home");
         }
         public JsonResult notifyurl(int id)
         {
@@ -446,14 +580,14 @@ namespace WebsiteRaoVat.Controllers
             qc.NgayHetHan = ngayhethan;
             db.QuangCaos.Add(qc);
             db.SaveChanges();
-            return Json(new { code = 200}, JsonRequestBehavior.AllowGet);
+            return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult NotAuthorize()
         {
             return View();
         }
+
     }
 
-    
 }

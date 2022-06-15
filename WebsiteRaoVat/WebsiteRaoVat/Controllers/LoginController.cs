@@ -99,7 +99,7 @@ namespace WebsiteRaoVat.Controllers
 
         public string InsertLoginFacebook(TaiKhoan enty)
         {
-            var user = db.TaiKhoans.SingleOrDefault(n => n.Username == enty.Username);
+            var user = db.TaiKhoans.SingleOrDefault(n => n.Username == enty.Username );
             if (user == null)
             {
                 db.TaiKhoans.Add(enty);
@@ -162,6 +162,11 @@ namespace WebsiteRaoVat.Controllers
             }
             return pictureUrl;
         }
+
+        //https://localhost:44349/Login/FacebookCallback
+        //https://localhost:44349/Login/loginFacebook
+        //https://localhost:44349/Login/RedirectUri
+        //https://localhost:44349/
 
         public ActionResult FacebookCallback(string code)
         {
