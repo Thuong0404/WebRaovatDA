@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "QuanLyTin";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -234,16 +233,18 @@
     $('#btnbank').click(function () {
         $('#thanhtoan').show();
         $('#btnXacNhan').hide();
-        //alert(giatien +""+ma);
+       
         $.ajax({
             type: 'post',
-            url: '/Home/ThanhToanMomo',
+            url: '/Home/Payment',
             data: {
                 tongtien: giatien,
                 mabaidang: ma,
             },
             success: function (data) {
-                //alert(giatien);
+                if (data.isRedirect == true) {
+                    window.location.href = data.redirectUrl;
+                }
             }
         });
     });

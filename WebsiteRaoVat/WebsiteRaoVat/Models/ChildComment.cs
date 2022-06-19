@@ -16,6 +16,12 @@ namespace WebsiteRaoVat.Models
         public string NoiDung { get; set; }
 
         public int? MaBL { get; set; }
+
+        [StringLength(200)]
+        public string Username { get; set; }
+
         public virtual BinhLuan BinhLuan { get; set; }
+
+        public virtual TaiKhoan TaiKhoan { get; set; }
     }
 }

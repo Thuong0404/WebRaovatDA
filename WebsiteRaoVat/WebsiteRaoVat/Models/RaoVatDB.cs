@@ -8,7 +8,7 @@ namespace WebsiteRaoVat.Models
     public partial class RaoVatDB : DbContext
     {
         public RaoVatDB()
-            : base("name=RaoVatDB2")
+            : base("name=RaoVatDB")
         {
         }
 
@@ -108,6 +108,10 @@ namespace WebsiteRaoVat.Models
                 .HasMany(e => e.BaiDangs)
                 .WithOptional(e => e.TaiKhoan)
                 .WillCascadeOnDelete();
+
+            modelBuilder.Entity<ChildComment>()
+                .Property(e => e.Username)
+                .IsUnicode(false);
         }
     }
 }

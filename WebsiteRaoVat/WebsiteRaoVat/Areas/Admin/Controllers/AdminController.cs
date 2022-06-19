@@ -16,7 +16,7 @@ namespace WebsiteRaoVat.Areas.Admin.Controllers
         RaoVatDB db = new RaoVatDB();
         public ActionResult BieuDO()
         {
-            int nam = 2021;
+            int nam = 2022;
 
             //ViewBag.Soluongtruycap = HttpContext.Application["Soluongtruycap"].ToString();
             ViewBag.tongqcao = quangcao();
@@ -66,7 +66,7 @@ namespace WebsiteRaoVat.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            int nam = 2021;
+            int nam = 2022;
             ViewBag.T1 = tongbaiviet(nam);
             ViewBag.T2 = tongbaiviet2(nam);
             ViewBag.T3 = tongbaiviet3(nam);
@@ -495,8 +495,8 @@ namespace WebsiteRaoVat.Areas.Admin.Controllers
         }
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "dieuvothi635@gmail.com";
-            string password = "dieu12345";
+            string email = "";
+            string password = "";
 
             var loginInfo = new NetworkCredential(email, password);
             var msg = new System.Net.Mail.MailMessage();

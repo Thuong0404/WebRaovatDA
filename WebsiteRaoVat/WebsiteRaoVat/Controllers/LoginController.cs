@@ -414,8 +414,8 @@ namespace WebsiteRaoVat.Controllers
 
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "dieuvothi635@gmail.com";
-            string password = "dieu12345";
+            string email = "18110269@student.hcmute.edu.vn";
+            string password = "19022000Dinh";
 
             var email1 = new NetworkCredential(email, password);
             var msg = new System.Net.Mail.MailMessage();

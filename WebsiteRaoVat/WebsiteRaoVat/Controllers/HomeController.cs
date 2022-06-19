@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using WebsiteRaoVat.Models;
@@ -24,6 +26,7 @@ namespace WebsiteRaoVat.Controllers
         {
             List<DanhMuc> lstDanhMuc = db.DanhMucs.ToList();
             return View(lstDanhMuc);
+
         }
         public JsonResult AddBinhLuan(int idbaidang, string noidung)
         {
@@ -37,7 +40,7 @@ namespace WebsiteRaoVat.Controllers
 
                     ViewBag.Session = taikhoan.Username;
                     BinhLuan binhLuan = new BinhLuan();
-                    
+
                     binhLuan.Username = taikhoan.Username;
                     binhLuan.NoiDung = noidung;
                     binhLuan.MaBaiDang = idbaidang;
@@ -45,44 +48,44 @@ namespace WebsiteRaoVat.Controllers
                     db.BinhLuans.Add(binhLuan);
 
                     db.SaveChanges();
-                    
+
 
                 }
                 else
                 {
                     return Json(new { code = 500, }, JsonRequestBehavior.AllowGet);
                 }
-                    return Json(new { code = 200, msg = "Bình Luận thành công" }, JsonRequestBehavior.AllowGet);
-                }
-                
+                return Json(new { code = 200, msg = "Bình Luận thành công" }, JsonRequestBehavior.AllowGet);
+            }
+
             catch (Exception ex)
             {
                 return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
         }
-        public JsonResult AddChildBinhLuan(string noidung, int idbl)
+        public JsonResult AddChildBinhLuan(string noidung, int idbl, string username)
         {
 
             try
             {
 
                 TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
-               
+
                 if (taikhoan.Username != "null")
                 {
-                    
+
                     ViewBag.Session = taikhoan.Username;
-                    
+
                     ChildComment binhLuan = new ChildComment();
-                    
+                    binhLuan.Username = taikhoan.Username;
                     binhLuan.MaBL = idbl;
                     binhLuan.NoiDung = noidung;
-                    
+
                     db.ChildComments.Add(binhLuan);
 
                     db.SaveChanges();
-                   
+
                 }
                 else
                 {
@@ -105,11 +108,11 @@ namespace WebsiteRaoVat.Controllers
             {
 
                 TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
-                var binhluan = (from c in db.BinhLuans where c.MaBL==mabl && c.Username==username select c).SingleOrDefault();
-                
+                var binhluan = (from c in db.BinhLuans where c.MaBL == mabl && c.Username == username select c).SingleOrDefault();
+
                 binhluan.NoiDung = noidung;
-                binhluan.MaBaiDang = idbaidang;
-               
+
+
                 db.SaveChanges();
                 return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
             }
@@ -123,7 +126,7 @@ namespace WebsiteRaoVat.Controllers
         {
             try
             {
-                var bl = (from c in db.BinhLuans where c.MaBL == mabl select c).FirstOrDefault();
+                BinhLuan bl = db.BinhLuans.Where(c => c.MaBL == mabl).FirstOrDefault();
                 db.BinhLuans.Remove(bl);
                 db.SaveChanges();
 
@@ -134,8 +137,43 @@ namespace WebsiteRaoVat.Controllers
                 return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+        //SỬA XÓA CMT CON
+        public JsonResult EditChildCommnent(int idbaidang, int mabl, string noidung, int mablparent)
+        {
 
-        public JsonResult getLoaiSP(int MaDanhMuc)
+            try
+            {
+
+                TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+                var binhluan = (from c in db.ChildComments where c.MaBL == mabl && c.BinhLuan.MaBL == mablparent select c).SingleOrDefault();
+
+                binhluan.NoiDung = noidung;
+
+                db.SaveChanges();
+                return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult XoaChildBinhLuan(int? mabl)
+        {
+            try
+            {
+                ChildComment bl = db.ChildComments.Where(c => c.MaBLChild == mabl).FirstOrDefault();
+                db.ChildComments.Remove(bl);
+                db.SaveChanges();
+
+                return Json(new { code = 200 }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public JsonResult getLoaiSP(int? MaDanhMuc)
         {
             try
             {
@@ -336,7 +374,6 @@ namespace WebsiteRaoVat.Controllers
         }
         public ActionResult BaiDang(int id)
         {
-            
             TaiKhoan tk = (TaiKhoan)Session["TaiKhoan"];
             BaiDang baidang = db.BaiDangs.Where(x => x.MaBaiDang == id).FirstOrDefault();
             // lấy all cmt
@@ -345,22 +382,63 @@ namespace WebsiteRaoVat.Controllers
             List<ChildComment> lstChildCmt = new List<ChildComment>();
 
             //laaays cmt con
-            foreach( var item in lstBL)
+            foreach (var item in lstBL)
             {
-                List<ChildComment>listcmt= (db.ChildComments.Where(c => c.MaBL ==item.MaBL)).ToList();
+                List<ChildComment> listcmt = (db.ChildComments.Where(c => c.MaBL == item.MaBL)).ToList();
 
                 lstChildCmt.AddRange(listcmt);
             }
-            
             ViewBag.listChildCmt = lstChildCmt;
-
-            //ViewBag.Session = tk.Username;
-
+            if (tk.Username != null)
+            {
+                ViewBag.Session = tk.Username;
+                ViewBag.img = tk.Hinh;
+            }
             ViewBag.listBL = lstBL;
-            
-               
-
             return View(baidang);
+        }
+        public JsonResult getchildcmt(int mabl, int mabaidang, int machild)
+        {
+            try
+            {
+                TaiKhoan tk = (TaiKhoan)Session["TaiKhoan"];
+                List<ChildComment> lstbl = (from c in db.ChildComments where c.MaBL == mabl && c.BinhLuan.MaBaiDang == mabaidang && c.Username == tk.Username && c.MaBLChild==machild select c).ToList();
+                List<BinhLuan> listbl = new List<BinhLuan>();
+                var bl = (from b in lstbl
+                          select new
+                          {
+                              us = b.Username,
+                              mabl=b.MaBL,
+                              nd = b.NoiDung,
+
+                          }).ToList();
+                return Json(new { code = 200, lstbl = bl }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public JsonResult getcmt(int mabl, int mabaidang)
+        {
+            try
+            {
+                TaiKhoan tk = (TaiKhoan)Session["TaiKhoan"];
+                List<BinhLuan> lstbl = (from c in db.BinhLuans where c.MaBL == mabl && c.MaBaiDang == mabaidang && c.Username == tk.Username select c).ToList();
+                List<BinhLuan> listbl = new List<BinhLuan>();
+                var bl = (from b in lstbl
+                          select new
+                          {
+                              us = b.Username,
+                              nd = b.NoiDung,
+
+                          }).ToList();
+                return Json(new { code = 200, lstbl = bl }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { code = 500, msg = "Không thành công" + e.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
         public JsonResult getTinLienQuan(int madanhmuc, int mabaidang)
         {
@@ -467,6 +545,11 @@ namespace WebsiteRaoVat.Controllers
         }
         public ActionResult returnUrl(int id)
         {
+            var tk = Session["TaiKhoan"];
+            TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+            var list = (from c in db.BaiDangs where (c.Username == taikhoan.Username) select c).FirstOrDefault();
+
+            //var b = (from c in db.BaiDangs where (c.TaiKhoan.Username == c.Username && c.MaBaiDang==id&& c.Username==username && username==tk.us ) select (c.TaiKhoan.Email)).FirstOrDefault();
             string param = Request.QueryString.ToString().Substring(0, Request.QueryString.ToString().IndexOf("signature") - 1);
             //log.Debug(param);
             param = Server.UrlDecode(param);
@@ -507,11 +590,16 @@ namespace WebsiteRaoVat.Controllers
                 qc.NgayHetHan = ngayhethan;
                 db.QuangCaos.Add(qc);
                 db.SaveChanges();
-                
+
                 ViewBag.Message = "Thanh toán thành công!";
+
+                SendEmail(list.TaiKhoan.Email, "Xác nhận thanh toán của Fashi", "Bạn đã thanh toán quảng cáo tin thành công cho Fashi số tiền là :" + amount);
+
+
+
             }
-            return View();
-            //return RedirectToAction("QuanLyTin", "Home");
+
+            return RedirectToAction("QuanLyTin", "Home");
         }
         public JsonResult notifyurl(int id)
         {
@@ -588,6 +676,128 @@ namespace WebsiteRaoVat.Controllers
             return View();
         }
 
+        //Thanh toán ngân hàng
+        [HttpPost]
+        public JsonResult Payment(int tongtien, int mabaidang)
+        {
+            string url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+            string returnUrl = "https://localhost:44349/Home/PaymentConfirm" + "/" + mabaidang;
+            string tmnCode = "GHHNT2HB";
+            string hashSecret = "BAGAOHAPRHKQZASKQZASVPRSAKPXNYXS";
+            Session["ma"] = mabaidang;
+            PayLib pay = new PayLib();
+            amount = "" + tongtien * 1000;
+            pay.AddRequestData("vnp_Version", "2.0.0"); //Phiên bản api mà merchant kết nối. Phiên bản hiện tại là 2.0.0
+            pay.AddRequestData("vnp_Command", "pay"); //Mã API sử dụng, mã cho giao dịch thanh toán là 'pay'
+            pay.AddRequestData("vnp_TmnCode", tmnCode); //Mã website của merchant trên hệ thống của VNPAY (khi đăng ký tài khoản sẽ có trong mail VNPAY gửi về)
+            pay.AddRequestData("vnp_Amount", amount); //số tiền cần thanh toán, công thức: số tiền * 100 - ví dụ 10.000 (mười nghìn đồng) --> 1000000
+            pay.AddRequestData("vnp_BankCode", ""); //Mã Ngân hàng thanh toán (tham khảo: https://sandbox.vnpayment.vn/apis/danh-sach-ngan-hang/), có thể để trống, người dùng có thể chọn trên cổng thanh toán VNPAY
+            pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
+            pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
+            pay.AddRequestData("vnp_IpAddr", TTUtil.GetIpAddress()); //Địa chỉ IP của khách hàng thực hiện giao dịch
+            pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
+            pay.AddRequestData("vnp_OrderInfo", "Mua quang cáo"); //Thông tin mô tả nội dung thanh toán
+            pay.AddRequestData("vnp_OrderType", "other"); //topup: Nạp tiền điện thoại - billpayment: Thanh toán hóa đơn - fashion: Thời trang - other: Thanh toán trực tuyến
+            pay.AddRequestData("vnp_ReturnUrl", returnUrl); //URL thông báo kết quả giao dịch khi Khách hàng kết thúc thanh toán
+            pay.AddRequestData("vnp_TxnRef", DateTime.Now.Ticks.ToString()); //mã hóa đơn
+
+            string paymentUrl = pay.CreateRequestUrl(url, hashSecret);
+
+            return Json(new { code = 200, redirectUrl = paymentUrl, isRedirect = true }, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult PaymentConfirm()
+        {
+            if (Request.QueryString.Count > 0)
+            {
+                string hashSecret = "BAGAOHAPRHKQZASKQZASVPRSAKPXNYXS"; //Chuỗi bí mật
+                var vnpayData = Request.QueryString;
+                PayLib pay = new PayLib();
+
+                //lấy toàn bộ dữ liệu được trả về
+                foreach (string s in vnpayData)
+                {
+                    if (!string.IsNullOrEmpty(s) && s.StartsWith("vnp_"))
+                    {
+                        pay.AddResponseData(s, vnpayData[s]);
+                    }
+                }
+
+                long orderId = Convert.ToInt64(pay.GetResponseData("vnp_TxnRef")); //mã hóa đơn
+                long vnpayTranId = Convert.ToInt64(pay.GetResponseData("vnp_TransactionNo")); //mã giao dịch tại hệ thống VNPAY
+                string vnp_ResponseCode = pay.GetResponseData("vnp_ResponseCode"); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
+                string vnp_SecureHash = Request.QueryString["vnp_SecureHash"]; //hash của dữ liệu trả về
+
+                bool checkSignature = pay.ValidateSignature(vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
+                TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
+                var list = (from c in db.BaiDangs where (c.Username == taikhoan.Username) select c).FirstOrDefault();
+                if (checkSignature)
+                {
+                    if (vnp_ResponseCode == "00")
+                    {
+                        DateTime now = DateTime.Now;
+                        DateTime ngayhethan = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
+
+                        if (amount == "1000")
+                        {
+                            ngayhethan = now.AddDays(1);
+                        }
+                        else if (amount == "3000")
+                        {
+                            ngayhethan = now.AddDays(3);
+                        }
+                        else if (amount == "5000")
+                        {
+                            ngayhethan = now.AddDays(5);
+                        }
+                        QuangCao qc = new QuangCao();
+                        int a = Convert.ToInt32(Session["ma"].ToString());
+                        qc.NgayMua = now;
+                        qc.SoTien = int.Parse(amount);
+                        qc.MaBaiDang = a;
+                        qc.NgayHetHan = ngayhethan;
+                        db.QuangCaos.Add(qc);
+                        db.SaveChanges();
+                        //Thanh toán thành công
+                        ViewBag.Message = "Thanh toán thành công hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId;
+                        SendEmail(list.TaiKhoan.Email, "Xác nhận thanh toán của Fashi", "Bạn đã thanh toán quảng cáo tin thành công cho Fashi số tiền là :" + amount);
+                    }
+                    else
+                    {
+                        //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
+                        ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId + " | Mã lỗi: " + vnp_ResponseCode;
+                    }
+                }
+                else
+                {
+
+                    ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý";
+                }
+            }
+
+            return View();
+        }
+
+        public void SendEmail(string address, string subject, string message)
+        {
+            string email = "18110269@student.hcmute.edu.vn";
+            string password = "19022000Dinh";
+
+            var email1 = new NetworkCredential(email, password);
+            var msg = new MailMessage();
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+
+            msg.From = new MailAddress(email);
+            msg.To.Add(new MailAddress(address));
+            msg.Subject = subject;
+            msg.Body = message;
+            msg.IsBodyHtml = true;
+
+            smtpClient.EnableSsl = true;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = email1;
+            smtpClient.Send(msg);
+        }
     }
 
 }

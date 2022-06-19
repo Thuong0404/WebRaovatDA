@@ -188,6 +188,7 @@
             }
         }
         function AddBaiDang() {
+            alert($("#TieuDe").val())
             //alert(img[0] + "" + img[1]);
             XuLiFileHinh();
             console.log(hinh1);
@@ -211,7 +212,10 @@
                         Hinh4: hinh1[4]
                     },
                     success: function (data) {
+                        if (data.code == 200) {
                         alert("Đăng thành công");
+                        window.location = "/Home/QuanLyTin";
+                        }
                     }
                 });
             }

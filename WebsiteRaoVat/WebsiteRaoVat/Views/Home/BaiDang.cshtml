@@ -1,5 +1,4 @@
 ﻿@model WebsiteRaoVat.Models.BaiDang
-
 @{
     var Lst = ViewBag.listBL as IEnumerable<WebsiteRaoVat.Models.BinhLuan>;
     var LstChildCmt = ViewBag.listChildCmt as IEnumerable<WebsiteRaoVat.Models.ChildComment>;
@@ -12,7 +11,7 @@
     <div class="container">
         <div class="row" style="background-color:#fff; margin:1px; padding:3rem">
             <div class="col-6">
-                <input hidden value="@ViewBag.Session" id="txtSs" />
+                <input hidden value="@ViewBag.Session" id="@ViewBag.Session" class="ttttt" />
                 <div class="w3-content w3-display-container" id="@Model.MaBaiDang" style="margin-bottom:1rem">
                     @{ var i = 0;}
                     @if (Model.HinhAnh != null)
@@ -163,67 +162,76 @@
             @foreach (var item in Lst)
             {
 
-                <div class="row pn-product itemcmt" style="width: 100%; background-color: #fff; margin: 1px; padding: 0.5rem 1rem; border-bottom: 1px solid #ced4da ">
-                    <input class="inputbl" value="@item.MaBL" type="hidden" />
+                <div id="@item.MaBL" class="row pn-product itemcmt" style="width: 100%; background-color: #fff; margin: 1px; padding: 0.5rem 1rem; border-bottom: 1px solid #ced4da ">
+
                     <div style="object-fit:cover; padding:0.5rem;">
-                        <input class="txtuser" type="hidden" value="@item.TaiKhoan.Username" />
+                        <input class="txtuser" id="@item.Username" type="hidden" value="@item.TaiKhoan.Username" />
                         @if (item.TaiKhoan.Hinh != null)
                         {
                             <img src="@item.TaiKhoan.Hinh" class="img-dm" style="height:80px" href="/Tindang/Trangcanhan/@item.Username">
 
+
                         }
                         else
-                        {
-                            <img src="/Images/img_avatar.png" width="40" height="40" style="border-radius: 50%; padding: 4px 8px" href="/Tindang/Trangcanhan/@item.Username" />
+                {
+
+                        <img src="/Images/img_avatar.png" class="img-dm" style="height:80px" href="/Tindang/Trangcanhan/@item.Username">
+                }
 
 
-                        }
 
                     </div>
                     <div>
 
                         <h4 href="/Tindang/Trangcanhan/@item.Username" style="margin-bottom: 5px; font-weight: bold">@item.TaiKhoan.TenNguoiDung</h4>
 
-                        <h4 style="color: black;" class="txtnd" >@item.NoiDung</h4>
+                        <h4 style="color: black;" id="txtnd">@item.NoiDung</h4>
+
+                        <div name="inputedit">
+
+
+                        </div>
+
 
                         <button style="bottom:0px;" class="btn tl1" name="btnphanhoi1">Phản hồi</button>
-                        <button style="bottom:0px;" class="btn  " name="btnedit" id="btnedit">Chỉnh sửa</button>
-                        <button style="bottom:0px;" class="btn  btnxoa" name="btnHide">Xóa</button>
+                        <button style="bottom:0px;" class="btn  " name="btnedit">Chỉnh sửa</button>
+                        <button style="bottom:0px;" class="btn  btnxoa" name="btnDelete">Xóa</button>
 
 
                         @foreach (var item2 in LstChildCmt)
                         {
                             if (item2.MaBL == item.MaBL)
                             {
-                                <div class="row pn-product" style=" width:100%;background-color:#fff; margin:1px; padding:0.5rem 1rem ;">
-                                    <div style="object-fit:cover; padding:0.5rem; ">
-                                        @if (item.TaiKhoan.Hinh != null)
-                                        {
-                                            <img src="@item.TaiKhoan.Hinh" class="img-dm" style="height:80px" href="/Tindang/Trangcanhan/@item.Username">
+                                <div id="@item2.MaBLChild" class="row pn-product itemchildcmt" style=" width:100%;background-color:#fff; margin:1px; padding:0.5rem 1rem ;">
 
+                                    <div style="object-fit:cover; padding:0.5rem; ">
+
+                                        @if (item2.TaiKhoan.Hinh != null)
+                                        {
+                                            <img src="@item2.TaiKhoan.Hinh" class="img-dm" style="height:80px" href="/Tindang/Trangcanhan/@item2.Username">
                                         }
                                         else
                                         {
-                                            <img src="/Images/img_avatar.png" width="40" height="40" style="border-radius: 50%; padding: 4px 8px" href="/Tindang/Trangcanhan/@item.Username" />
-
-
+                                            <img src="/Images/img_avatar.png" class="img-dm" style="height:80px" href="/Tindang/Trangcanhan/@item.Username">
                                         }
+
+
                                     </div>
                                     <div>
 
-                                        <h4 href="/Tindang/Trangcanhan/@item.Username" style="margin-bottom:5px; font-weight:bold">@item.TaiKhoan.TenNguoiDung</h4>
-                                        <h4 style="color:black; ">@item2.NoiDung</h4>
-                                        <button style="bottom:0px;" class="btn  " name="btnphanhoi" id="btnphanhoi2">Phản hồi</button>
-                                        <button style="bottom:0px;" class="btn  " name="btnphanhoi" id="btnedit2">Chỉnh sửa</button>
-                                        <button style="bottom:0px;" class="btn  btnxoa" name="btnHide">Xóa</button>
+                                        <h4 href="/Tindang/Trangcanhan/@item2.Username" style="margin-bottom:5px; font-weight:bold">@item2.TaiKhoan.TenNguoiDung</h4>
+                                        <h4 style="color:black; " id="txtchildcmt">@item2.NoiDung</h4>
+
+
+                                        <div name="editchilld" id="inputeditchild" > 
+                                        </div>
+
+                                        <button style="bottom:0px;" class="btn  " name="btnchildphanhoi" id="btnedit2">Chỉnh sửa</button>
+                                        <button style="bottom:0px;" class="btn  btnxoa" name="btnchildHide">Xóa</button>
 
 
                                     </div>
-                                    @*<div class="phanhoi2">
-                                            <input class="idbl " id="@item2.MaBL" type="hidden" />
-                                            <input type="text" class="form-control " id="txtcomment2" />
-                                            <input type="submit" class=" btn btn-danger" id="btncomment2" />
-                                        </div>*@
+                                   
                                 </div>
                             }
 
@@ -235,32 +243,51 @@
 
 
                 </div>
-
-
             }
-
 
         </div>
         <div class="phanhoi">
             <label style="display: flex; ">
-                @if (Model.TaiKhoan.Hinh != null)
+                @if (ViewBag.img != null)
                 {
-                    <img src=" @Model.TaiKhoan.Hinh" width="40" height="40" style=" border-radius: 50%; padding:4px 8px" />
+                    <img src="@ViewBag.img" width="40" height="40" style="border-radius: 50%; padding: 4px 8px" />
                     <input type="text" class="form-control col-6" id="txtcomment" />
                     <input type="submit" class=" btn btn-danger" id="btncomment" />
+
+
                 }
                 else
                 {
                     <img src="/Images/img_avatar.png" width="40" height="40" style="border-radius: 50%; padding: 4px 8px" />
-                    <input type="text" class="form-control " id="txtcomment" />
+                    <input type="text" class="form-control col-6" id="txtcomment" />
                     <input type="submit" class=" btn btn-danger" id="btncomment" />
-
                 }
+
+
 
             </label>
         </div>
     </div>
 </section>
+<div class="modal" id="modalThongBao">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận</h5>
+                <button type="button" class="close" onclick="modalClose()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="btnMess">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnDongYXoa">Đồng ý</button>
+                <button type="button" class="btn btn-secondary" onclick="modalClose()">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 <style>
     .phanhoi {
         display: flex;
@@ -330,7 +357,7 @@
         x[slideIndex - 1].style.display = "block";
         dots[slideIndex - 1].className += " w3-white";
     }
-
+//chat
     $("#btnChatVoiND").click(function () {
         if ($("#session").val() == 1) {
             //Xử lý.......
@@ -352,8 +379,12 @@
 
 
     $(".phanhoi2").hide();
+    function modalClose() {
+        $('#modalThongBao').hide();
+
+    }
     //nhấn button hiện input
-    $(".tl1").click(function () {
+    $(document).on('click', "button[ name = 'btnphanhoi1']", function () {
          if ($("#session").val() == 1) {
              var a = `<div class="phanhoi1">
                                             <input type="text"   class="form-control " id="txtcomment1" name="noidung" />
@@ -366,36 +397,41 @@
             $("#popup_login").show();
         }
     });
-    // thêm bình luận con
+
+    // thêm bình luận con -phản hồi cmt
     $(document).on('click', "input[name = 'btncomment1']", function () {
-        alert($('.inputbl').val())
+        if ($("#session").val() == 1) {
 
-        if ($("#txtcomment1").val() != null) {
-
-            $.ajax({
-                type: 'post',
-                url: '/Home/AddChildBinhLuan',
-                data: {
-                    idbd: @Model.MaBaiDang,
-                    idbl: $('.inputbl').val(),
-                    noidung: $('#txtcomment1').val(),
-                },
-                success: function (data) {
-                    if (data.code == 200) {
-                        alert("Binh luận thành công")
-                        window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
+            if ($("#txtcomment1").val() != null) {
+                $.ajax({
+                    type: 'post',
+                    url: '/Home/AddChildBinhLuan',
+                    data: {
+                        idbd: @Model.MaBaiDang,
+                        idbl: $(this).closest('.itemcmt').attr('id'),
+                        noidung: $('#txtcomment1').val(),
+                        username: $('.ttttt').val(),
+                    },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert("Binh luận thành công")
+                            //window.reload();
+                            window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
+                        }
                     }
-                }
-            })
-        } else {
-            alert("Bạn chưa nhập bình luận của mình !")
+                })
+            } else {
+                alert("Bạn chưa nhập bình luận của mình !")
+            }
         }
-    }
+
+        else {
+                $("#popup_login").show();
+            }
+        }
     );
 
-
-
-
+    var ma;
   //thêm cmt cha
     $("#btncomment").click(function () {
         if ($("#session").val() == 1) {
@@ -405,12 +441,14 @@
                     type: 'post',
                     url: '/Home/AddBinhLuan',
                     data: {
+
                         idbaidang: @Model.MaBaiDang,
                         noidung: $('#txtcomment').val(),
                     },
                     success: function (data) {
                         if (data.code == 200) {
-                            alert("Binh luận thành công")
+                            alert("Bình luận thành công")
+
                             window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
                         }
                     }
@@ -425,42 +463,242 @@
 
 
     });
-  //edit cmt cha
-    $(document).on('click', "button[name = 'btnedit']", function () {
+    // Xóa cmt cha
 
-        var inputString = $(".txtnd").val();
-        var a = `<div class="edit">
+    $(document).on('click', "button[name = 'btnDelete']", function () {
+        if ($("#session").val() == 1) {
+            $('#btnMess').append('<p>Bạn chắc chắn muốn xóa bình luận này ?</p>');
+            $('#modalThongBao').show();
+            ma = $(this).closest('.itemcmt').attr('id')
 
-                                            <input type="text" id="txteditcmt"   class="form-control " value="` + inputString +`" />
-                                            <input type="submit" class=" btn btn-danger" name="btneditparent" value="Edit" />
-                                        </div> ` ;
-        $(this).parent().append(a);
-        $(this).attr("disabled", true);
-        $(document).on('click', "input[name = 'btneditparent']", function () {
-            $.ajax({
-                type: 'post',
-                url: '/Home/EditCommnent',
-                data: {
-                    idbaidang: @Model.MaBaiDang,
-                    mabl: $('.inputbl').val(),
-                    noidung: $('#txteditcmt').val(),
-                    username: $('.txtuser').val(),
-                },
-
-                success: function (data) {
-                    if (data.code == 200) {
-                        alert("Cập nhập thành công")
-                        location.reload();
-                        //window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
-                    }
+        }
+        else {
+            $("#popup_login").show();
+        }
+    });
+    // nhấn nút xác nhận đồng ý xóa
+    $('#btnDongYXoa').click(function () {
+        alert($(this).closest('.itemcmt').attr('id'))
+        $.ajax({
+            type: 'post',
+            url: '/Home/XoaBinhLuan',
+            data: {
+                mabl: ma,
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    alert("Xóa thành công")
+                    location.reload();
                 }
-            })
-        })
+            }
+
+        });
     });
 
+    //edit child cmt
+    
+
+        $(document).on('click', "button[name = 'btnchildphanhoi']", function () {
+        alert($(this).closest('.itemchildcmt').attr('id'))
+        if ($("#session").val() == 1) {
+            $('#txtchildcmt').hide();
+            var ma = $(this).closest('.itemcmt').attr('id')
+            var machild = $(this).closest('.itemchildcmt').attr('id')
+
+            $.ajax({
+                type: 'get',
+                url: '/Home/getchildcmt',
+                data: {
+                    mabl: ma,
+                    machild: machild,
+                    mabaidang:@Model.MaBaiDang,
+                },
+                success: function (data) {
+                    $("div[name = 'editchilld']").empty();
+
+                    $.each(data.lstbl, function (k, v) {
+                        if (data.code == 200) {
+                            $('#txtchildcmt').hide();
+                        var a = `<input value=" ` + v.nd +`" type="text" name="txteditcmt" id="txteditchildcmt" />
+                       <input type="submit" class="btn btn-danger" value="Edit" name="submiteditchild" />
+                `
+                            if (v.us == user){
+                                $("div[name = 'editchilld']").append(a);
+                        }
+                        else {
+                            alert("Bạn không phải là người đăng bình luận này")
+                        }
+                        }
+
+
+                    });
+                }
+            });
+        }
+        else {
+            $("#popup_login").show();
+        }
+    });
+    $(document).on('click', "input[name='submiteditchild']", function () {
+        alert($('.txtuser').val())
+        var ma = $(this).closest('.itemcmt').attr('id')
+        var machild = $(this).closest('.itemchildcmt').attr('id')
+        $.ajax({
+            type: 'post',
+            url: '/Home/EditChildCommnent',
+            data: {
+                mabl: ma,
+                machild: machild,
+                mabaidang:@Model.MaBaiDang,
+                noidung: $('#txteditchildcmt').val(),
+                username: $('.txtuser').val(),
+                    },
+
+        success: function (data) {
+            if (data.code == 200) {
+                alert("Cập nhập thành công")
+                $('#txtnd').show();
+                location.reload();
+            }
+        }
+                })
+            })
+
+
+
+
+    @*$(document).on('click', "button[name = 'btnchildphanhoi']", function () {
+        if ($("#session").val() == 1) {
+            $('#txtchildcmt').hide();
+
+            $(document).on('click', "input[name='submiteditchild']", function () {
+                $.ajax({
+                    type: 'post',
+                    url: '/Home/ EditChildCommnent',
+                    data: {
+                        idbaidang: @Model.MaBaiDang,
+                        mablparent: $(this).closest('.itemcmt').attr('id'),
+                        mabl: $(this).closest('.itemchildcmt').attr('id'),
+                        noidung: $('#txteditchildcmt').val(),
+                    },
+
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert("Cập nhập thành công")
+                            $('#txtchildcmt').show();
+                            location.reload();
+                        }
+                    }
+                })
+            })
+        }
+        else {
+            $("#popup_login").show();
+        }
+
+    });*@
+    // Xóa cmt cha
+
+    $(document).on('click', "button[name = 'btnchildHide']", function () {
+        if ($("#session").val() == 1) {
+            $('#btnMess').append('<p>Bạn chắc chắn muốn xóa bình luận này ?</p>');
+            $('#modalThongBao').show();
+            ma = $(this).closest('.itemchildcmt').attr('id')
+
+        }
+        else {
+            $("#popup_login").show();
+        }
+    });
+    // nhấn nút xác nhận đồng ý xóa
+    $('#btnDongYXoa').click(function () {
+        $.ajax({
+            type: 'post',
+            url: '/Home/XoaChildBinhLuan',
+            data: {
+                mabl: ma,
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                   alert("Xóa thành công")
+
+                            window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
+                }
+            }
+
+        });
+    });
+
+    //edit cha
+     user = $('.ttttt').val();
+    $(document).on('click', "button[name = 'btnedit']", function () {
+        alert( $('.ttttt').val())
+        if ($("#session").val() == 1) {
+            $('#txtnd').hide();
+            var ma = $(this).closest('.itemcmt').attr('id')
+            $.ajax({
+                type: 'get',
+                url: '/Home/getcmt',
+                data: {
+                    mabl: ma,
+                    mabaidang:@Model.MaBaiDang,
+                },
+                success: function (data) {
+                    $("div[name = 'inputedit']").empty();
+
+                    $.each(data.lstbl, function (k, v) {
+                        if (data.code == 200) {
+                        $('#txtnd').hide();
+                        var a = `<input value=" ` + v.nd +`" type="text" name="txteditcmt" id="txteditcmt" />
+                       <input type="submit" class="btn btn-danger" value="Edit" name="submitedit" />
+                `
+                            if (v.us == user){
+                            $("div[name = 'inputedit']").append(a);
+                        }
+                        else {
+                            alert("Bạn không phải là người đăng bình luận này")
+                        }
+                        }
+
+
+                    });
+                }
+            });
+        }
+        else {
+            $("#popup_login").show();
+        }
+    });
+    $(document).on('click', "input[name='submitedit']", function () {
+        var ma = $(this).closest('.itemcmt').attr('id')
+        $.ajax({
+            type: 'post',
+            url: '/Home/EditCommnent',
+            data: {
+                idbaidang: @Model.MaBaiDang,
+                mabl: ma,
+                noidung: $('#txteditcmt').val(),
+                username: $('.txtuser').val(),
+                    },
+
+        success: function (data) {
+            if (data.code == 200) {
+                alert("Cập nhập thành công")
+                $('#txtnd').show();
+                location.reload();
+            }
+        }
+                })
+            })
+
 </script>
+
+
+
 @section Jsfooter{
     <script>
+
+
 
         $(document).ready(function () {
             $.ajax({
@@ -475,24 +713,24 @@
 
                     $.each(data.listTin, function (k, v) {
                         var t = `<div class="col-lg-2 col-sm-5 pn-product" style="padding:0px; padding:1rem" name="frmSP" id="` + v.MaBaiDang + `">
-                                        <div class="product-item">
-                                            <div class="pi-pic">
-                                                <img src="`+ v.HinhAnh + `" />
-                                                <div class="icon">
-                                                    <i class="icon_heart_alt" style="color:red"></i>
-                                                </div>
-                                            </div>
-                                            <div class="pi-text">
-                                                <a href="#">
-                                                    <h5>`+ v.TieuDe + `</h5>
-                                                </a>
-                                                <div class="product-price">
-                                                    `+ v.Gia + ` đ
-                                                </div>
+                                                            <div class="product-item">
+                                                                <div class="pi-pic">
+                                                                    <img src="`+ v.HinhAnh + `" />
+                                                                    <div class="icon">
+                                                                        <i class="icon_heart_alt" style="color:red"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="pi-text">
+                                                                    <a href="#">
+                                                                        <h5>`+ v.TieuDe + `</h5>
+                                                                    </a>
+                                                                    <div class="product-price">
+                                                                        `+ v.Gia + ` đ
+                                                                    </div>
 
-                                            </div>
-                                        </div>
-                                    </div>`;
+                                                                </div>
+                                                            </div>
+                                                        </div>`;
                         $('#frmSanPham').append(t);
                     });
                 }

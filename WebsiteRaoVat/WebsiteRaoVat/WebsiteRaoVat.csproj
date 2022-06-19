@@ -204,10 +204,13 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoaiSanPham.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\PayCompares.cs" />
+    <Compile Include="Models\PayLib.cs" />
     <Compile Include="Models\QuangCao.cs" />
     <Compile Include="Models\RaoVatDB.cs" />
     <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
+    <Compile Include="Models\TTUtil.cs" />
     <Compile Include="MoMoSecurity.cs" />
     <Compile Include="PaymentRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -504,6 +507,7 @@
     <Content Include="Views\Home\NotAuthorize.cshtml" />
     <Content Include="Views\Login\changepass.cshtml" />
     <Content Include="Views\Login\resetpass.cshtml" />
+    <Content Include="Views\Home\PaymentConfirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

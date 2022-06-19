@@ -35,9 +35,9 @@
             <div class="login-form" style="background-color:#fff; padding:2rem">
                 <h3 class="text-center" style="margin-bottom:15px">Thay đổi mật khẩu</h3>
                 <div>
-                    <div class="group-input">
-                        <label for="Email">Email:</label>
-                        <input type="email" required="" id="email">
+                    <div class="group-input" >
+                      
+                        <input type="email" required="" id="email" class="form-control" value="Email">
                     </div>
 
                     <div class="group-input gi-check" id="ThongBao">
@@ -57,8 +57,8 @@
                 <div class="switch-login">
                 </div>
             </div>
-        </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -92,21 +92,21 @@
                 },
                 success: function (data) {
                     if (data.code == 200) {
-                       
+
                         alert("Chúng tôi đã gởi mật khẩu đến mail của bạn. Vui lòng kiểm tra");
                         $("#popup_pass").hide();
                         $("#popup_resetpass").show();
-                        } 
-
                     }
-                
+
+                }
+
             })
         }
 
 
 
     });
-  
+
 
 </script>
 
