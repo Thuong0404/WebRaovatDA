@@ -780,8 +780,8 @@ namespace WebsiteRaoVat.Controllers
 
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "18110269@student.hcmute.edu.vn";
-            string password = "19022000Dinh";
+            string email = "";
+            string password = "";
 
             var email1 = new NetworkCredential(email, password);
             var msg = new MailMessage();
