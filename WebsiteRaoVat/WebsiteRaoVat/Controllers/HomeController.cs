@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebsiteRaoVat.Models;
@@ -333,7 +336,27 @@ namespace WebsiteRaoVat.Controllers
                 return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-
+         public JsonResult gettinnoibat(int trang)
+        {
+            try
+            {
+                var listtinnoibat = (from b in db.QuangCaos.Where(b => b.NgayHetHan.Value.Year == DateTime.Now.Year && b.NgayHetHan.Value.Month == DateTime.Now.Month && b.NgayHetHan.Value.Day >= DateTime.Now.Day).OrderByDescending(b => b.NgayHetHan).ToList()
+                                     select new {
+                                         MaBaiDang = b.MaBaiDang,
+                                         TieuDe = b.BaiDang.TieuDe,
+                                         Gia = b.BaiDang.Gia.GetValueOrDefault(0).ToString("N0"),
+                                         HinhAnh = b.BaiDang.HinhAnh,
+                                     }).ToList();
+                var trangSP = listtinnoibat.Count() % 30 == 0 ? listtinnoibat.Count() / 30 : listtinnoibat.Count() / 30 + 1;
+                var kqpt = listtinnoibat.Skip((trang - 1) * 30).Take(30).ToList();
+                return Json(new { code = 200, trangSP = trangSP, lstTinnoibat= kqpt }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+    
         public JsonResult getDanhSachSP(int trang)
         {
             try
@@ -393,6 +416,12 @@ namespace WebsiteRaoVat.Controllers
             {
                 ViewBag.Session = tk.Username;
                 ViewBag.img = tk.Hinh;
+            }
+            else
+            {
+
+            ViewBag.listBL = lstBL;
+
             }
             ViewBag.listBL = lstBL;
             return View(baidang);
@@ -482,110 +511,170 @@ namespace WebsiteRaoVat.Controllers
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static string serectkey;
         public static string amount;
-        public void ThanhToanMomo(int tongtien, int mabaidang)
+        //public void ThanhToanMomo(int tongtien, int mabaidang)
+        //{
+
+        //    //string serectkey = "MOMOIQFF20220524";
+        //    //string partnerCode = "MOMOOJOI20210710";
+        //    //string accessKey = "8onTTFnTUuE4YSL7";
+        //    //request params need to request to MoMo system
+        //    string endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+        //    string partnerCode = "MOMOIQFF20220524";
+        //    string accessKey = "8onTTFnTUuE4YSL7";
+        //     string serectkey = "sxYpKQjIzvxSY1hbgokJdIsQeT3iFulI";
+        //    string orderInfo = "Mua quảng cáo";
+        //    string returnUrl = "https://localhost:44349/Home/returnUrl/" + mabaidang;
+        //    string notifyurl = "https://localhost:44349/Home/notifyurl";
+
+        //    amount = "" + tongtien;
+        //    string orderid = Guid.NewGuid().ToString();
+        //    string requestId = Guid.NewGuid().ToString();
+        //    string extraData = "";
+
+        //    //Before sign HMAC SHA256 signature
+        //    string rawHash = "partnerCode=" +
+        //        partnerCode + "&accessKey=" +
+        //        accessKey + "&requestId=" +
+        //        requestId + "&amount=" +
+        //        amount + "&orderId=" +
+        //        orderid + "&orderInfo=" +
+        //        orderInfo + "&returnUrl=" +
+        //        returnUrl + "&notifyUrl=" +
+        //        notifyurl + "&extraData=" +
+        //        extraData;
+
+        //    log.Debug("rawHash = " + rawHash);
+
+        //    MoMoSecurity crypto = new MoMoSecurity();
+        //    //sign signature SHA256
+        //    string signature = crypto.signSHA256(rawHash, serectkey);
+        //    log.Debug("Signature = " + signature);
+
+        //    //build body json request
+        //    JObject message = new JObject
+        //    {
+        //        { "partnerCode", partnerCode },
+        //        { "accessKey", accessKey },
+        //        { "requestId", requestId },
+        //        { "amount", amount },
+        //        { "orderId", orderid },
+        //        { "orderInfo", orderInfo },
+        //        { "returnUrl", returnUrl },
+        //        { "notifyUrl", notifyurl },
+        //        { "extraData", extraData },
+        //        { "requestType", "captureMoMoWallet" },
+        //        { "signature", signature }
+
+        //    };
+        //    //log.Debug("Json request to MoMo: " + message.ToString());
+        //    string responseFromMomo = PaymentRequest.sendPaymentRequest(endpoint, message.ToString());
+
+        //    JObject jmessage = JObject.Parse(responseFromMomo);
+        //    //log.Debug("Return from MoMo: " + jmessage.ToString());
+
+        //    //yes...
+        //    System.Diagnostics.Process.Start(jmessage.GetValue("payUrl").ToString());
+
+        //}
+
+
+        public async Task<JsonResult> ThanhToanMomo(int tongtien, int mabaidang)
         {
-            //request params need to request to MoMo system
-            string endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+
+
+            //string serectkey = "sFcbSGRSJjwGxwhhcEktCHWYUuTuPNDB";
+            //string partnerCode = "MOMOOJOI20210710";
+            //string accessKey = "iPXneGmrJH0G8FOP";
             string partnerCode = "MOMOIQFF20220524";
             string accessKey = "8onTTFnTUuE4YSL7";
-            //string serectkey = "art4TPJhFphYnpVLIDX9pIWKcXybGJw3";
-            serectkey = "sxYpKQjIzvxSY1hbgokJdIsQeT3iFulI";
-            string orderInfo = "Mua quảng cáo";
-            string returnUrl = "https://localhost:44349/Home/returnUrl/" + mabaidang;
-            string notifyurl = "https://localhost:44349/Home/notifyurl";
-
-            amount = "" + tongtien;
-            string orderid = Guid.NewGuid().ToString();
+            string serectkey = "sxYpKQjIzvxSY1hbgokJdIsQeT3iFulI";
+            string orderId = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
             string extraData = "";
-
+            string orderInfo = "Mua quảng cáo Fashi";
+            string amount = tongtien + "";
+            Session["tongtien"] = tongtien;
+            string redirectUrl = "https://localhost:44349/Home/returnUrl/" + mabaidang;
+            string ipnUrl = "https://localhost:44349/Home/notifyurl";
+            string requestType = "captureWallet";
             //Before sign HMAC SHA256 signature
-            string rawHash = "partnerCode=" +
-                partnerCode + "&accessKey=" +
-                accessKey + "&requestId=" +
-                requestId + "&amount=" +
-                amount + "&orderId=" +
-                orderid + "&orderInfo=" +
-                orderInfo + "&returnUrl=" +
-                returnUrl + "&notifyUrl=" +
-                notifyurl + "&extraData=" +
-                extraData;
+            string rawHash = "accessKey=" + accessKey +
+                "&amount=" + amount +
+                "&extraData=" + extraData +
+                "&ipnUrl=" + ipnUrl +
+                "&orderId=" + orderId +
+                "&orderInfo=" + orderInfo +
+                "&partnerCode=" + partnerCode +
+                "&redirectUrl=" + redirectUrl +
+                "&requestId=" + requestId +
+                "&requestType=" + requestType
+                ;
 
-            log.Debug("rawHash = " + rawHash);
 
             MoMoSecurity crypto = new MoMoSecurity();
             //sign signature SHA256
             string signature = crypto.signSHA256(rawHash, serectkey);
-            log.Debug("Signature = " + signature);
+
 
             //build body json request
             JObject message = new JObject
             {
                 { "partnerCode", partnerCode },
-                { "accessKey", accessKey },
+                { "partnerName", "Test" },
+                { "storeId", "MomoTestStore" },
                 { "requestId", requestId },
                 { "amount", amount },
-                { "orderId", orderid },
+                { "orderId", orderId },
                 { "orderInfo", orderInfo },
-                { "returnUrl", returnUrl },
-                { "notifyUrl", notifyurl },
+                { "redirectUrl", redirectUrl },
+                { "ipnUrl", ipnUrl },
+                { "lang", "en" },
                 { "extraData", extraData },
-                { "requestType", "captureMoMoWallet" },
+                { "requestType", requestType },
                 { "signature", signature }
 
             };
-            //log.Debug("Json request to MoMo: " + message.ToString());
-            string responseFromMomo = PaymentRequest.sendPaymentRequest(endpoint, message.ToString());
+            var httpClient = new HttpClient();
 
-            JObject jmessage = JObject.Parse(responseFromMomo);
-            //log.Debug("Return from MoMo: " + jmessage.ToString());
+            var httpContent = new StringContent(message.ToString(), Encoding.UTF8, "application/json");
 
-            //yes...
-            System.Diagnostics.Process.Start(jmessage.GetValue("payUrl").ToString());
+            HttpResponseMessage response = await httpClient.PostAsync("https://test-payment.momo.vn/v2/gateway/api/create", httpContent);
+            string a = await response.Content.ReadAsStringAsync();
+            JObject jmessage = JObject.Parse(a);
+            string paymentUrl = jmessage.GetValue("payUrl").ToString();
+            return Json(new { code = 200, redirectUrl = paymentUrl, isRedirect = true }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult returnUrl(int id)
         {
+            int tongtien = Convert.ToInt32(Session["tongtien"].ToString());
+            string param = Request.QueryString.ToString().Substring(0, Request.QueryString.ToString().IndexOf("signature") - 1);
             var tk = Session["TaiKhoan"];
             TaiKhoan taikhoan = (TaiKhoan)Session["TaiKhoan"];
             var list = (from c in db.BaiDangs where (c.Username == taikhoan.Username) select c).FirstOrDefault();
 
-            //var b = (from c in db.BaiDangs where (c.TaiKhoan.Username == c.Username && c.MaBaiDang==id&& c.Username==username && username==tk.us ) select (c.TaiKhoan.Email)).FirstOrDefault();
-            string param = Request.QueryString.ToString().Substring(0, Request.QueryString.ToString().IndexOf("signature") - 1);
-            //log.Debug(param);
-            param = Server.UrlDecode(param);
-            MoMoSecurity crypto = new MoMoSecurity();
-            //string serectkey = ConfigurationManager.AppSettings["serectkey"].ToString();
-            string serectKey = serectkey.ToString();
-            string signature = crypto.signSHA256(param, serectKey);
-            if (signature != Request["signature"].ToString())
+            //Thành công
+
+            if (Request.QueryString["message"].Equals("Successful."))
             {
-                ViewBag.Message = "Thông tin không hợp lệ!";
-                return View();
-            }
-            if (!Request.QueryString["errorCode"].Equals("0"))
-            {
-                ViewBag.Message = "Thanh toán thất bại!";
-                return View();
-            }
-            else
-            {
+
+                //Thay đổi trạng thái vé
                 DateTime now = DateTime.Now;
                 DateTime ngayhethan = new DateTime();
-                if (amount == "1000")
+                if (tongtien == 10000)
                 {
                     ngayhethan = now.AddDays(1);
                 }
-                else if (amount == "3000")
+                else if (tongtien == 30000)
                 {
                     ngayhethan = now.AddDays(3);
                 }
-                else if (amount == "5000")
+                else if (tongtien == 50000)
                 {
                     ngayhethan = now.AddDays(5);
                 }
                 QuangCao qc = new QuangCao();
                 qc.NgayMua = now;
-                qc.SoTien = int.Parse(amount);
+                qc.SoTien = tongtien;
                 qc.MaBaiDang = id;
                 qc.NgayHetHan = ngayhethan;
                 db.QuangCaos.Add(qc);
@@ -593,14 +682,20 @@ namespace WebsiteRaoVat.Controllers
 
                 ViewBag.Message = "Thanh toán thành công!";
 
-                SendEmail(list.TaiKhoan.Email, "Xác nhận thanh toán của Fashi", "Bạn đã thanh toán quảng cáo tin thành công cho Fashi số tiền là :" + amount);
-
-
+                SendEmail(list.TaiKhoan.Email, "Xác nhận thanh toán của Fashi", "Bạn đã thanh toán quảng cáo tin thành công cho Fashi số tiền là :" + tongtien);
 
             }
+            else
+            {
+                ViewBag.Message = "Thanh toán thất bại!";
+                //Thay đổi trạng thái vé
 
-            return RedirectToAction("QuanLyTin", "Home");
+                return View();
+
+            }
+            return View();
         }
+
         public JsonResult notifyurl(int id)
         {
             //string param = "";
@@ -651,15 +746,15 @@ namespace WebsiteRaoVat.Controllers
             //Thanh cong
             DateTime now = DateTime.Now;
             DateTime ngayhethan = new DateTime();
-            if (amount == "1000")
+            if (amount == "10000")
             {
                 ngayhethan = now.AddDays(1);
             }
-            else if (amount == "3000")
+            else if (amount == "30000")
             {
                 ngayhethan = now.AddDays(3);
             }
-            else if (amount == "5000")
+            else if (amount == "50000")
             {
                 ngayhethan = now.AddDays(5);
             }
@@ -686,7 +781,7 @@ namespace WebsiteRaoVat.Controllers
             string hashSecret = "BAGAOHAPRHKQZASKQZASVPRSAKPXNYXS";
             Session["ma"] = mabaidang;
             PayLib pay = new PayLib();
-            amount = "" + tongtien * 1000;
+            amount = "" + tongtien * 100;
             pay.AddRequestData("vnp_Version", "2.0.0"); //Phiên bản api mà merchant kết nối. Phiên bản hiện tại là 2.0.0
             pay.AddRequestData("vnp_Command", "pay"); //Mã API sử dụng, mã cho giao dịch thanh toán là 'pay'
             pay.AddRequestData("vnp_TmnCode", tmnCode); //Mã website của merchant trên hệ thống của VNPAY (khi đăng ký tài khoản sẽ có trong mail VNPAY gửi về)
@@ -735,18 +830,17 @@ namespace WebsiteRaoVat.Controllers
                     if (vnp_ResponseCode == "00")
                     {
                         DateTime now = DateTime.Now;
-                        DateTime ngayhethan = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-
-
-                        if (amount == "1000")
+                        DateTime ngayhethan = DateTime.Now;
+                         
+                        if (amount == "1000000")
                         {
                             ngayhethan = now.AddDays(1);
                         }
-                        else if (amount == "3000")
+                        else if (amount == "3000000")
                         {
                             ngayhethan = now.AddDays(3);
                         }
-                        else if (amount == "5000")
+                        else if (amount == "5000000")
                         {
                             ngayhethan = now.AddDays(5);
                         }
@@ -780,8 +874,8 @@ namespace WebsiteRaoVat.Controllers
 
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "";
-            string password = "";
+            string email = "18110269@student.hcmute.edu.vn";
+            string password = "19022000Dinh";
 
             var email1 = new NetworkCredential(email, password);
             var msg = new MailMessage();

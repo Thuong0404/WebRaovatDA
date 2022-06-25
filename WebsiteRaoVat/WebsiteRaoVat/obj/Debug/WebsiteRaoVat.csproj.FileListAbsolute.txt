@@ -529,7 +529,6 @@ D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\Microsoft.Owin.Se
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\Microsoft.Owin.Security.OAuth.xml
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\obj\Debug\WebsiteRaoVat.csproj.AssemblyReference.cache
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\obj\Debug\WebsiteRaoVat.csproj.CoreCompileInputs.cache
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\obj\Debug\WebsiteRaoVat.csproj.CopyComplete
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\obj\Debug\WebsiteRaoVat.dll
@@ -583,3 +582,4 @@ D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\roslyn\vbc.exe.co
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\roslyn\vbc.rsp
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\roslyn\VBCSCompiler.exe
 D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\bin\roslyn\VBCSCompiler.exe.config
+D:\Wordthinam4\ĐA\LapTrinhWeb\WebsiteRaoVat\WebsiteRaoVat\obj\Debug\WebsiteRaoVat.csproj.AssemblyReference.cache

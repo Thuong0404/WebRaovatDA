@@ -495,8 +495,8 @@ namespace WebsiteRaoVat.Areas.Admin.Controllers
         }
         public void SendEmail(string address, string subject, string message)
         {
-            string email = "";
-            string password = "";
+            string email = "18110269@student.hcmute.edu.vn";
+            string password = "19022000Dinh";
 
             var loginInfo = new NetworkCredential(email, password);
             var msg = new System.Net.Mail.MailMessage();

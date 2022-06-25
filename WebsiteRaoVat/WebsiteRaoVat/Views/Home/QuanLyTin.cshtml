@@ -78,18 +78,18 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-3">
-                        <button class="btn btn-info" style="margin-bottom:5px" id="1000" name="btnTien">
+                        <button class="btn btn-info" style="margin-bottom:5px" id="10000" name="btnTien">
                             1 ngày
                         </button>
-                        1.000 đ
-                        <button class="btn btn-info" style="margin-bottom:5px" id="3000" name="btnTien">
+                        10.000 đ
+                        <button class="btn btn-info" style="margin-bottom:5px" id="30000" name="btnTien">
                             3 ngày
                         </button>
-                        3.000 đ
-                        <button class="btn btn-info" style="margin-bottom:5px" id="5000" name="btnTien">
+                        30.000 đ
+                        <button class="btn btn-info" style="margin-bottom:5px" id="50000" name="btnTien">
                             5 ngày
                         </button>
-                        5.000 đ
+                        50.000 đ
                     </div>
                     <div class="col-8">
                         Bạn muốn bài bán được hiện ngay trang chủ và tăng số lượng người tiếp cận hơn? Vui lòng chọn ngay số lượng ngày cần hiển thị theo nhu cầu của bạn.
@@ -99,8 +99,8 @@
 
             <div class="modal-footer">
                 <div id="thanhtoan">
-                    <button type="button" class="btn btn-primary" id="btnmomo">MoMo</button>
-                    <button type="button" class="btn btn-danger" id="btnbank" data-dismiss="modal">Thẻ ngân hàng</button>
+                    <button type="button" class="btn " id="btnmomo"><img src="~/Images/momo.png" height="30" width="50" />MoMo</button>
+                    <button type="button" class="btn " id="btnbank" data-dismiss="modal"><img src="~/Images/vnpay.png" height="30" width="50" />Thẻ ngân hàng</button>
                 </div>
                 <button type="button" class="btn btn-primary" id="btnXacNhan">Xác nhận</button>
                 <button type="button" class="btn btn-danger" id="btnClose" data-dismiss="modal">Đóng</button>
@@ -265,7 +265,9 @@
                 mabaidang: ma,
             },
             success: function (data) {
-                //alert(giatien);
+                if (data.isRedirect == true) {
+                    window.location.href = data.redirectUrl;
+                }
             }
         });
     });

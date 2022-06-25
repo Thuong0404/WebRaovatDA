@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Text;
 using System.Net;
+using System.Threading;
 
 namespace MoMo
 {
@@ -28,6 +29,7 @@ namespace MoMo
                 httpWReq.ContentLength = data.Length;
                 httpWReq.ReadWriteTimeout = 30000;
                 httpWReq.Timeout = 15000;
+               
                 Stream stream = httpWReq.GetRequestStream();
                 stream.Write(data, 0, data.Length);
                 stream.Close();

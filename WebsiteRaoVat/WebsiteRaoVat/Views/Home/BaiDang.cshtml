@@ -1,4 +1,5 @@
-﻿@model WebsiteRaoVat.Models.BaiDang
+﻿
+@model WebsiteRaoVat.Models.BaiDang
 @{
     var Lst = ViewBag.listBL as IEnumerable<WebsiteRaoVat.Models.BinhLuan>;
     var LstChildCmt = ViewBag.listChildCmt as IEnumerable<WebsiteRaoVat.Models.ChildComment>;
@@ -140,6 +141,7 @@
     <input hidden id="txtMaDanhMuc" value="@Model.LoaiSanPham.MaDanhMuc" />
 
 </section>
+
 <section class="py-3">
     <div class="container">
         <div class="container" style="background-color:#fff; padding:1rem">
@@ -383,56 +385,8 @@
         $('#modalThongBao').hide();
 
     }
-    //nhấn button hiện input
-    $(document).on('click', "button[ name = 'btnphanhoi1']", function () {
-         if ($("#session").val() == 1) {
-             var a = `<div class="phanhoi1">
-                                            <input type="text"   class="form-control " id="txtcomment1" name="noidung" />
-                                            <input type="submit" class=" btn btn-danger" name="btncomment1" />
-                                        </div> ` ;
-        $(this).parent().append(a);
-            $(this).attr("disabled", true);
-        }
-        else {
-            $("#popup_login").show();
-        }
-    });
 
-    // thêm bình luận con -phản hồi cmt
-    $(document).on('click', "input[name = 'btncomment1']", function () {
-        if ($("#session").val() == 1) {
-
-            if ($("#txtcomment1").val() != null) {
-                $.ajax({
-                    type: 'post',
-                    url: '/Home/AddChildBinhLuan',
-                    data: {
-                        idbd: @Model.MaBaiDang,
-                        idbl: $(this).closest('.itemcmt').attr('id'),
-                        noidung: $('#txtcomment1').val(),
-                        username: $('.ttttt').val(),
-                    },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            alert("Binh luận thành công")
-                            //window.reload();
-                            window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
-                        }
-                    }
-                })
-            } else {
-                alert("Bạn chưa nhập bình luận của mình !")
-            }
-        }
-
-        else {
-                $("#popup_login").show();
-            }
-        }
-    );
-
-    var ma;
-  //thêm cmt cha
+     //thêm cmt cha
     $("#btncomment").click(function () {
         if ($("#session").val() == 1) {
             if ($("#txtcomment").val() != null) {
@@ -494,10 +448,58 @@
 
         });
     });
+    //nhấn button hiện input
+    $(document).on('click', "button[ name = 'btnphanhoi1']", function () {
+         if ($("#session").val() == 1) {
+             var a = `<div class="phanhoi1">
+                                            <input type="text"   class="form-control " id="txtcomment1" name="noidung" />
+                                            <input type="submit" class=" btn btn-danger" name="btncomment1" />
+                                        </div> ` ;
+        $(this).parent().append(a);
+            $(this).attr("disabled", true);
+        }
+        else {
+            $("#popup_login").show();
+        }
+    });
+
+    // thêm bình luận con -phản hồi cmt
+    $(document).on('click', "input[name = 'btncomment1']", function () {
+        if ($("#session").val() == 1) {
+
+            if ($("#txtcomment1").val() != null) {
+                $.ajax({
+                    type: 'post',
+                    url: '/Home/AddChildBinhLuan',
+                    data: {
+                        idbd: @Model.MaBaiDang,
+                        idbl: $(this).closest('.itemcmt').attr('id'),
+                        noidung: $('#txtcomment1').val(),
+                        username: $('.ttttt').val(),
+                    },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert("Binh luận thành công")
+                            //window.reload();
+                            window.location = "/Home/BaiDang/" + @Model.MaBaiDang;
+                        }
+                    }
+                })
+            } else {
+                alert("Bạn chưa nhập bình luận của mình !")
+            }
+        }
+
+        else {
+                $("#popup_login").show();
+            }
+        }
+    );
+
+    var ma;
+
 
     //edit child cmt
-    
-
         $(document).on('click', "button[name = 'btnchildphanhoi']", function () {
         alert($(this).closest('.itemchildcmt').attr('id'))
         if ($("#session").val() == 1) {
@@ -540,16 +542,16 @@
         }
     });
     $(document).on('click', "input[name='submiteditchild']", function () {
-        alert($('.txtuser').val())
+
         var ma = $(this).closest('.itemcmt').attr('id')
         var machild = $(this).closest('.itemchildcmt').attr('id')
         $.ajax({
             type: 'post',
             url: '/Home/EditChildCommnent',
             data: {
-                mabl: ma,
-                machild: machild,
-                mabaidang:@Model.MaBaiDang,
+                mablparent: ma,
+                mabl: machild,
+                idbaidang:@Model.MaBaiDang,
                 noidung: $('#txteditchildcmt').val(),
                 username: $('.txtuser').val(),
                     },
@@ -557,7 +559,7 @@
         success: function (data) {
             if (data.code == 200) {
                 alert("Cập nhập thành công")
-                $('#txtnd').show();
+                $('#txtchildcmt').show();
                 location.reload();
             }
         }
@@ -567,36 +569,6 @@
 
 
 
-    @*$(document).on('click', "button[name = 'btnchildphanhoi']", function () {
-        if ($("#session").val() == 1) {
-            $('#txtchildcmt').hide();
-
-            $(document).on('click', "input[name='submiteditchild']", function () {
-                $.ajax({
-                    type: 'post',
-                    url: '/Home/ EditChildCommnent',
-                    data: {
-                        idbaidang: @Model.MaBaiDang,
-                        mablparent: $(this).closest('.itemcmt').attr('id'),
-                        mabl: $(this).closest('.itemchildcmt').attr('id'),
-                        noidung: $('#txteditchildcmt').val(),
-                    },
-
-                    success: function (data) {
-                        if (data.code == 200) {
-                            alert("Cập nhập thành công")
-                            $('#txtchildcmt').show();
-                            location.reload();
-                        }
-                    }
-                })
-            })
-        }
-        else {
-            $("#popup_login").show();
-        }
-
-    });*@
     // Xóa cmt cha
 
     $(document).on('click', "button[name = 'btnchildHide']", function () {
@@ -629,7 +601,7 @@
         });
     });
 
-    //edit cha
+    //edit cmt cha
      user = $('.ttttt').val();
     $(document).on('click', "button[name = 'btnedit']", function () {
         alert( $('.ttttt').val())
